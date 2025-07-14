@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"slices"
+	"strings"
 
 	"github.com/doug-martin/goqu/v9"
 	"github.com/doug-martin/goqu/v9/exp"
@@ -14,6 +15,8 @@ import (
 	"github.com/stashapp/stash/pkg/utils"
 	"gopkg.in/guregu/null.v4"
 	"gopkg.in/guregu/null.v4/zero"
+
+	"math/rand"
 )
 
 const (
@@ -783,6 +786,8 @@ func (qb *PerformerStore) getPerformerSort(findFilter *models.FindFilterType) (s
 		sortQuery += qb.sortByLastPlayedAt(direction)
 	case "last_o_at":
 		sortQuery += qb.sortByLastOAt(direction)
+	case "rating":
+		sortQuery += getSort(sort, direction, performerTable) + ", " + strings.TrimPrefix(getRandomSort(performerTable, direction, rand.Uint64())," ORDER BY ")
 	default:
 		sortQuery += getSort(sort, direction, "performers")
 	}

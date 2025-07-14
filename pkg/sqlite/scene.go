@@ -20,6 +20,8 @@ import (
 	"github.com/stashapp/stash/pkg/models"
 	"github.com/stashapp/stash/pkg/sliceutil"
 	"github.com/stashapp/stash/pkg/utils"
+
+	"math/rand"
 )
 
 const (
@@ -1192,6 +1194,8 @@ func (qb *SceneStore) setSceneSort(query *queryBuilder, findFilter *models.FindF
 		query.sortAndPagination += fmt.Sprintf(" ORDER BY (SELECT MAX(o_date) FROM %s AS sort WHERE sort.%s = %s.id) %s", scenesODatesTable, sceneIDColumn, sceneTable, getSortDirection(direction))
 	case "o_counter":
 		query.sortAndPagination += getCountSort(sceneTable, scenesODatesTable, sceneIDColumn, direction)
+	case "rating":
+		query.sortAndPagination += getSort(sort, direction, sceneTable) + ", " + strings.TrimPrefix(getRandomSort(sceneTable, direction, rand.Uint64())," ORDER BY ")
 	default:
 		query.sortAndPagination += getSort(sort, direction, "scenes")
 	}
